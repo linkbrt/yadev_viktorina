@@ -1,2 +1,2 @@
-# bookish-parakeet
+# yadev_viktorina
 Simple quiz
