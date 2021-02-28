@@ -2,7 +2,6 @@ from django.db import models
 
 
 class Quiz(models.Model):
-
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     slug = models.SlugField(max_length=150, unique=True)
@@ -10,7 +9,7 @@ class Quiz(models.Model):
         upload_to='pages/',
         blank=True, null=True,
     )
-    questions = models.ManyToManyField("Question")
+    questions = models.ManyToManyField("Question", blank=True)
 
     class Meta:
         ordering = ['-pk']
@@ -25,8 +24,7 @@ class QuestionType(models.Choices):
 
 
 class Question(models.Model):
-
-    quiz_model = models.ForeignKey(Quiz, on_delete=models.DO_NOTHING)
+    # quiz_model = models.ForeignKey(Quiz, on_delete=models.SET_NULL, null=True, blank=True)
     content = models.TextField()
     image = models.ImageField(
         upload_to='question/',
@@ -42,7 +40,6 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
-
     content = models.CharField(max_length=100)
     question = models.ForeignKey(
         Question,
@@ -59,31 +56,42 @@ class QuizState:
     def __init__(self, quiz_pk: int = 1,
                  question_index: int = 1,
                  max_index: int = 10,
-                 passed: bool = False) -> None:
+                 passed: bool = False,
+                 user_answers: list = [],
+                 result: bool = None) -> None:
         self.quiz_pk = quiz_pk
         self.question_index = question_index
         self.max_index = max_index
         self.passed = passed
+        self.user_answers = user_answers
+        self.result = result
+    
+    __attrs__ = [
+        'quiz_pk', 'question_index', 'max_index',
+        'passed', 'user_answers', 'result'
+    ]
 
-    # я уверен что переключение passed в двух местах это костыль
-    # но я не знаю как сделать лучше -_-
-    # p.s. хотя есть в этом какая-то логика но я вообще не уверен
 
     def next(self) -> None:
         if self.question_index < self.max_index:
             self.question_index += 1
             self.passed = not self.passed
 
+
     def step(self) -> None:
         self.passed = not self.passed
 
+
     def to_dict(self) -> dict:
-        return {
-            'quiz_pk': self.quiz_pk,
-            'question_index': self.question_index,
-            'max_index': self.max_index,
-            'passed': self.passed,
-        }
+        state_data = {}
+        for attr in self.__attrs__:
+            state_data[attr] = self.__getattribute__(attr)
+        return state_data
+    
+    
+    def is_done(self):
+        print(self.passed)
+        return self.max_index == self.question_index and self.passed
 
     @staticmethod
     def from_dict(data) -> 'QuizState':
