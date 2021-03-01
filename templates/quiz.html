@@ -18,14 +18,14 @@
         {% if result is None %}
             {% if question.type == 'choise' %}
               {% for answer in answers %}
-                <input type="checkbox" value='on' id="{{ answer.pk }}"/>
+                <input type="checkbox" value='on' id="{{ answer.pk }}" name="{{ answer.pk }}"/>
                 <label for='{{ answer.pk }}'>{{ answer.content }}</label>
                 <br>
               {% endfor %}
             {% elif question.type == 'input' %}
-              <input class="form-control mb-3 mt-1 shadow-sm" type="text" id="sample3" name="user_input" placeholder="Ваш ответ"/>
+              <input type="text" id="sample3" name="user_input" placeholder="Ваш ответ"/>
             {% endif %}
-          <button class="btn btn-success mb-3 mt-1 shadow-sm" type="submit">
+          <button type="submit">
             Проверить
           </button>
         {% else %}

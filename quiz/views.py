@@ -67,7 +67,7 @@ def play(request, slug):
                     correct_answers.append(answer.content)
         if question.type == 'choise':
             for key, value in request.POST.items():
-                if key and value == 'on':
+                if value == 'on':
                     state.user_answers.append(Answer.objects.get(pk=int(key)).content)
         else:
             user_input = request.POST.get('user_input')
