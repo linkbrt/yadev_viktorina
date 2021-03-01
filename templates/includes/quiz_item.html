@@ -1,23 +1,11 @@
-<div class="card mb-3 mt-1 shadow-sm">
-
-  <!-- Отображение текста поста -->
-  <div class="card-body">
-    <p class="card-text">
-      <!-- Ссылка на автора через @ -->
-      <a name="quiz_{{ quiz.pk }}" href="{% url 'play' quiz.slug %}">
-        <strong class="d-block text-gray-dark">{{ quiz.title }}</strong>
-      </a>
-      {% if quiz.description %}
-        {{ quiz.description|linebreaksbr }}
-      {% else %}
-        Здесь должно быть описание (⊙_⊙)
-      {% endif %}
-    </p>
-
-		{% if state.quiz_pk == quiz.pk %}
-      <small class="text-muted">{{ state.question_index }} / {{ quiz.questions.count }}</small>
+<div class="card">
+    <p class="card-title"><a name="quiz_{{ quiz.pk }}" href="{% url 'play' quiz.slug %}" class="card-title">{{ quiz.title }}</a></p>
+    {% if quiz.description %}
+        <p class="card-description">{{ quiz.description|linebreaksbr }}</p>
     {% else %}
-      <small class="text-muted">    </small>
+        <p class="card-description">Здесь должно быть описание (⊙_⊙)</p>
     {% endif %}
-  </div>
+    {% if state.quiz_pk == quiz.pk %}
+        <p class="card-small-text"><small class="card-small-text">Пройдено: {{ state.question_index }} / {{ quiz.questions.count }}</small></p>
+    {% endif %}
 </div>

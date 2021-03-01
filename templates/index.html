@@ -1,21 +1,17 @@
 {% extends "base.html" %}
-{% block title %} Главная {% endblock %}
-
-
+{% block title %}Главная{% endblock %}
 {% block content %}
-  <div class="container">
     {% if last_quiz %}
-      <div class='row'><h1>Продолжить</h1></div>
-      {% include "includes/quiz_item.html" with quiz=last_quiz %}
+        <h2 class="title">Последняя викторина</h2>
+        {% include "includes/quiz_item.html" with quiz=last_quiz %}
     {% endif %}
-    <div class='row'><h1>Доступные викторины</h1></div>
+    <h2 class="title">Доступные викторины</h2>
     {% for quiz in page %}
-      {% include "includes/quiz_item.html" with quiz=quiz %}
+        {% include "includes/quiz_item.html" with quiz=quiz %}
     {% endfor %}
-
     {% if page.has_other_pages %}
-      {% include "includes/paginator.html" with items=page paginator=paginator%}
+        <div class="paginator">
+            {% include "includes/paginator.html" %}
+        </div>
     {% endif %}
-  </div>
 {% endblock %}
-

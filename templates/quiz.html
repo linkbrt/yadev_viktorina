@@ -1,40 +1,29 @@
 {% extends "base.html" %}
-{% block title %} Викторина {% endblock %}
-{% block header %} {{ quiz.title }} {% endblock %}
+{% block title %} {{ quiz.title }} {% endblock %}
 {% block content %}
   {% if question is None %}
-    <div class='row'><h2>Нет вопросов</h2></div>
-    <a href="{% url 'index' %}"  class="btn btn-info mb-3 mt-1 shadow-sm" type="button">Вернутья на главную</a>
-  {% else %}
+    <label class="card-question">Нет вопросов</label><br>
+    <a href="{% url 'index' %}"  class="button" type="button">Вернутья на главную</a>
+    {% else %}
     <div class="container">
-      <h2>
-        <input type="text" readonly class="form-control-plaintext" id="question_text" value="Вопрос: {{ question.content|linebreaksbr }}">
-      </h2>
+      <label class="card-question">Вопрос: {{ question.content|linebreaksbr }}</label>
       {% if question.image != "" %}
         {% load thumbnail %}
         {% thumbnail question.image "560x400" crop="center" upscale=False as im %}
         <img src="{{ im.url }}" alt="" class="mb-3 mt-1 shadow-sm">
         {% endthumbnail %}
       {% endif %}
-
       <form method="post" action="{% url 'play' quiz.slug %}" enctype="multipart/form-data">
         {% csrf_token %}
         {% if result is None %}
             {% if question.type == 'choise' %}
-              <ul class="mx-auto">
-                {% for answer in answers %}
-                    <div class="form-check sm-3 row">
-                      <h3>
-                        <label class="form-check-label" for="flexCheckDefault">
-                          <input class="form-check-input xl" type="checkbox" value="on" id="flexCheckDefault" name="answer-{{ answer.pk }}"/>
-                            {{ answer.content }}
-                        </label>
-                      </h3>
-                    </div>
-                {% endfor %}
-              </ul>
+              {% for answer in answers %}
+                <input type="checkbox" value='on' id="{{ answer.pk }}"/>
+                <label for='{{ answer.pk }}'>{{ answer.content }}</label>
+                <br>
+              {% endfor %}
             {% elif question.type == 'input' %}
-              <input class="form-control mb-3 mt-1 shadow-sm" type="text" id="sample3" name="user_input" placeholder="Ваш ответ">
+              <input class="form-control mb-3 mt-1 shadow-sm" type="text" id="sample3" name="user_input" placeholder="Ваш ответ"/>
             {% endif %}
           <button class="btn btn-success mb-3 mt-1 shadow-sm" type="submit">
             Проверить
@@ -45,7 +34,7 @@
               <h3></h3>
               <span class="badge bg-success">Правильный ответ</span>
             {% else %}
-            <span class="badge bg-danger">Неправильный ответ</span>
+              <span class="badge bg-danger">Неправильный ответ</span>
               <h3></h3>
             {% endif %}
             <p>Правильно: {{ correct_answers }}</p>
@@ -56,15 +45,11 @@
               Следующий вопрос
             </button>
           {% else %}
-            <a href="{% url 'success_page' quiz.slug %}" class="btn btn-info mb-3 mt-1 shadow-sm" type="button">
+            <a href="{% url 'success_page' quiz.slug %}" class="button">
               Перейти к результатам
             </a>
           {% endif %}
         {% endif %}
       </form>
-      <div class="progress">
-        <div class="progress-bar bg-info progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ progress }}%">{{ progress }}%</div>
-      </div>
-    </div>
   {% endif %}
 {% endblock %}
